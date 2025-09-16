@@ -55,7 +55,11 @@
             >
               Edit
             </button>
-            <button class="btn btn-danger btn-sm" (click)="deleteUser(user)">
+            <button
+              *ngIf="!user.isActive"
+              class="btn btn-danger btn-sm"
+              (click)="deleteUser(user)"
+            >
               Delete
             </button>
           </td>
@@ -68,21 +72,38 @@
   </div>
 
   <!-- Pagination -->
-  <nav *ngIf="totalPages() > 1">
-    <ul class="pagination justify-content-center">
-      <li class="page-item" [class.disabled]="currentPage === 1">
-        <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
-      </li>
-      <li
-        class="page-item"
-        *ngFor="let page of [].constructor(totalPages()); let idx = index"
-        [class.active]="currentPage === idx + 1"
-      >
-        <a class="page-link" (click)="changePage(idx + 1)">{{ idx + 1 }}</a>
-      </li>
-      <li class="page-item" [class.disabled]="currentPage === totalPages()">
-        <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
-      </li>
-    </ul>
-  </nav>
+  <div class="ms-3">
+    <label for="itemsPerPage" class="me-2 fw-bold">Users per page:</label>
+    <select
+      id="itemsPerPage"
+      class="form-select d-inline-block w-auto"
+      [(ngModel)]="itemsPerPage"
+
+      (ngModelChange)="onItemsPerPageChange()"
+    >
+      <option *ngFor="let size of pageSizes" [value]="size">
+        {{ size }}
+      </option>
+    </select>
+
+    <nav *ngIf="totalPages() > 1">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="changePage(currentPage - 1)"
+            >Previous</a
+          >
+        </li>
+        <li
+          class="page-item"
+          *ngFor="let page of [].constructor(totalPages()); let idx = index"
+          [class.active]="currentPage === idx + 1"
+        >
+          <a class="page-link" (click)="changePage(idx + 1)">{{ idx + 1 }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages()">
+          <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 </div>

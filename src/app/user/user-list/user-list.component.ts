@@ -10,6 +10,7 @@ import { UserService } from '../user.service';
 })
 export class UserListComponent implements OnInit {
   searchTerm: string = '';
+  pageSizes: number[] = [5, 10, 20, 50];
   currentPage: number = 1;
   itemsPerPage: number = 5;
 
@@ -20,8 +21,21 @@ export class UserListComponent implements OnInit {
     return this.userService.getUsers;
   }
 
+  // changePage(page: number) {
+  //   this.currentPage = page;
+  // }
   changePage(page: number) {
-    this.currentPage = page;
+    const totalPages = this.totalPages();
+    if (page < 1) {
+      this.currentPage = 1;
+    } else if (page > totalPages) {
+      this.currentPage = totalPages > 0 ? totalPages : 1;
+    } else {
+      this.currentPage = page;
+    }
+  }
+  onItemsPerPageChange() {
+    this.currentPage = 1;
   }
 
   get paginatedUsers(): User[] {
@@ -37,7 +51,6 @@ export class UserListComponent implements OnInit {
   }
 
   toggleStatus(user: User) {
-    // user.isActive = !user.isActive;
     this.userService.toggleStatus(user.id);
   }
 
