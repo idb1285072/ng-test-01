@@ -1,4 +1,5 @@
-import { User } from './user.model';
+import { UserType } from './models/enums/user-type';
+import { User } from './models/interfaces/user.model';
 
 export const users: User[] = [
   {
@@ -10,6 +11,7 @@ export const users: User[] = [
     address: '123 Main St, New York, NY',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.Admin,
   },
   {
     id: 2,
@@ -20,6 +22,7 @@ export const users: User[] = [
     address: '456 Elm St, Los Angeles, CA',
     registeredDate: '2024-07-12',
     isActive: false,
+    role: UserType.SuperAdmin,
   },
   {
     id: 3,
@@ -30,6 +33,7 @@ export const users: User[] = [
     address: '789 Oak St, Chicago, IL',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.Contributor,
   },
   {
     id: 4,
@@ -40,6 +44,7 @@ export const users: User[] = [
     address: '321 Pine St, Houston, TX',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 5,
@@ -50,6 +55,7 @@ export const users: User[] = [
     address: '654 Maple St, Phoenix, AZ',
     registeredDate: '2024-07-12',
     isActive: false,
+    role: UserType.User,
   },
   {
     id: 6,
@@ -60,6 +66,7 @@ export const users: User[] = [
     address: '987 Cedar St, Philadelphia, PA',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 7,
@@ -70,6 +77,7 @@ export const users: User[] = [
     address: '111 Birch St, San Antonio, TX',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 8,
@@ -80,6 +88,7 @@ export const users: User[] = [
     address: '222 Walnut St, San Diego, CA',
     registeredDate: '2024-07-12',
     isActive: false,
+    role: UserType.User,
   },
   {
     id: 9,
@@ -90,6 +99,7 @@ export const users: User[] = [
     address: '333 Spruce St, Dallas, TX',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 10,
@@ -100,6 +110,7 @@ export const users: User[] = [
     address: '444 Aspen St, San Jose, CA',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 11,
@@ -110,6 +121,7 @@ export const users: User[] = [
     address: '555 Willow St, Austin, TX',
     registeredDate: '2024-07-12',
     isActive: false,
+    role: UserType.User,
   },
   {
     id: 12,
@@ -120,6 +132,7 @@ export const users: User[] = [
     address: '666 Poplar St, Jacksonville, FL',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 13,
@@ -130,6 +143,7 @@ export const users: User[] = [
     address: '777 Chestnut St, Fort Worth, TX',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 14,
@@ -140,6 +154,7 @@ export const users: User[] = [
     address: '888 Hickory St, Columbus, OH',
     registeredDate: '2024-07-12',
     isActive: false,
+    role: UserType.User,
   },
   {
     id: 15,
@@ -150,6 +165,7 @@ export const users: User[] = [
     address: '999 Sycamore St, Charlotte, NC',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 16,
@@ -160,6 +176,7 @@ export const users: User[] = [
     address: '1010 Magnolia St, Indianapolis, IN',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 17,
@@ -170,6 +187,7 @@ export const users: User[] = [
     address: '1111 Palm St, San Francisco, CA',
     registeredDate: '2024-07-12',
     isActive: false,
+    role: UserType.User,
   },
   {
     id: 18,
@@ -180,6 +198,7 @@ export const users: User[] = [
     address: '1212 Olive St, Seattle, WA',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 19,
@@ -190,6 +209,7 @@ export const users: User[] = [
     address: '1313 Cherry St, Denver, CO',
     registeredDate: '2024-07-12',
     isActive: true,
+    role: UserType.User,
   },
   {
     id: 20,
@@ -200,5 +220,6 @@ export const users: User[] = [
     address: '1414 Dogwood St, Boston, MA',
     registeredDate: '2024-07-12',
     isActive: false,
+    role: UserType.User,
   },
 ];
