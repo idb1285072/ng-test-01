@@ -16,30 +16,10 @@ export class UserListComponent implements OnInit {
   pageSizes: number[] = [5, 10, 20, 50];
   currentPage: number = 1;
   itemsPerPage: number = 5;
-  statusFilter: 'all' | 'active' | 'inactive' = 'active';
+  statusFilter: 'all' | 'active' | 'inactive' = 'all';
   roleFilter: UserType | 'all' = 'all';
   totalUsers: number = 0;
 
-  constructor(
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private userService: UserService
-  ) {}
-
-  ngOnInit(): void {
-    this.activatedRoute.queryParams.subscribe((params) => {
-      console.log(params['page'], params['itemsPerPage'], params['search']);
-      this.currentPage = +params['page'] || 1;
-      this.itemsPerPage = +params['itemsPerPage'] || 5;
-      this.searchTerm = params['search'] || '';
-      this.statusFilter = params['status'] || 'all';
-      this.refreshDisplayedUsers();
-    });
-  }
-
-  // get users(): User[] {
-  //   return this.userService.getUsers();
-  // }
   roleOptions: UserType[] = [
     UserType.SuperAdmin,
     UserType.Admin,
@@ -49,6 +29,66 @@ export class UserListComponent implements OnInit {
     UserType.Contributor,
     UserType.User,
   ];
+
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private userService: UserService
+  ) {}
+
+  // ngOnInit(): void {
+  //   this.activatedRoute.queryParams.subscribe((params) => {
+  //     this.currentPage = +params['page'] || 1;
+  //     this.itemsPerPage = +params['itemsPerPage'] || 5;
+  //     this.searchTerm = params['search'] || '';
+  //     this.statusFilter = params['status'] || 'all';
+  //     this.roleFilter = params['role'] || 'all';
+  //     this.refreshDisplayedUsers();
+  //   });
+  // }
+  ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.currentPage = +params['page'] || 1;
+      this.itemsPerPage = +params['itemsPerPage'] || 5;
+      this.searchTerm = params['search'] || '';
+      this.statusFilter = params['status'] || 'all';
+
+      // Fix role parsing
+      if (params['role'] && params['role'] !== 'all') {
+        this.roleFilter = +params['role']; // convert string to number for enum
+      } else {
+        this.roleFilter = 'all';
+      }
+
+      this.refreshDisplayedUsers();
+    });
+  }
+
+  get paginatedUsers(): User[] {
+    return this.displayedUsers;
+  }
+
+  totalPages(): number {
+    return Math.ceil(this.totalUsers / this.itemsPerPage);
+  }
+
+  private refreshDisplayedUsers() {
+    const result = this.userService.getPaginatedUsers(
+      this.currentPage,
+      this.itemsPerPage,
+      this.statusFilter,
+      this.searchTerm,
+      this.roleFilter
+    );
+    this.displayedUsers = result.users;
+    this.totalUsers = result.totalUsers;
+  }
+
+  private reload(resetPage: boolean = false) {
+    if (resetPage) this.currentPage = 1;
+    this.refreshDisplayedUsers();
+    this.updateUrl();
+  }
 
   changePage(page: number) {
     const totalPages = this.totalPages();
@@ -64,23 +104,19 @@ export class UserListComponent implements OnInit {
   }
 
   onItemsPerPageChange() {
-    this.currentPage = 1;
-    this.refreshDisplayedUsers();
-    this.updateUrl();
+    this.reload(true);
   }
 
   onRoleChange() {
-    this.currentPage = 1; // reset pagination
-    this.refreshDisplayedUsers();
-    this.updateUrl();
+    this.reload(true);
   }
 
-  get paginatedUsers(): User[] {
-    return this.displayedUsers;
+  onStatusChange() {
+    this.reload(true);
   }
 
-  totalPages(): number {
-    return this.userService.getTotalPages(this.itemsPerPage, this.searchTerm);
+  onSearchChange() {
+    this.reload(true);
   }
 
   toggleStatus(user: User) {
@@ -111,12 +147,6 @@ export class UserListComponent implements OnInit {
   onPaginationChange(event: PaginationEvent) {
     this.itemsPerPage = event.itemsPerPage;
     this.currentPage = event.currentPage;
-    this.refreshDisplayedUsers();
-    this.updateUrl();
-  }
-
-  onSearchChange() {
-    this.currentPage = 1;
     this.refreshDisplayedUsers();
     this.updateUrl();
   }
@@ -160,62 +190,6 @@ export class UserListComponent implements OnInit {
         return 'bg-light text-dark';
     }
   }
-  // get totalUsers() {
-  //   return this.userService.filterUsers(this.searchTerm).length;
-  // }
-
-  // private refreshDisplayedUsers() {
-  //   const totalPages = this.totalPages();
-  //   if (this.currentPage > totalPages) {
-  //     this.currentPage = totalPages > 0 ? totalPages : 1;
-  //   }
-  //   this.displayedUsers = this.userService.getPaginatedUsers(
-  //     this.currentPage,
-  //     this.itemsPerPage,
-  //     this.statusFilter,
-  //     this.searchTerm
-  //   ).users;
-  // }
-  private refreshDisplayedUsers() {
-    const result = this.userService.getPaginatedUsers(
-      this.currentPage,
-      this.itemsPerPage,
-      this.statusFilter,
-      this.searchTerm,
-      this.roleFilter
-    );
-
-    this.displayedUsers = result.users;
-    this.totalUsers = result.totalUsers;
-  }
-
-  // private refreshDisplayedUsers() {
-  //   const totalPages = this.totalPages();
-  //   if (this.currentPage > totalPages) {
-  //     this.currentPage = totalPages > 0 ? totalPages : 1;
-  //   }
-
-  //   let users = this.userService.getPaginatedUsers(
-  //     this.currentPage,
-  //     this.itemsPerPage,
-  //     this.searchTerm,
-  //     this.statusFilter
-  //   );
-
-  //   if (this.statusFilter === 'active') {
-  //     users = users.filter((u) => u.isActive);
-  //   } else if (this.statusFilter === 'inactive') {
-  //     users = users.filter((u) => !u.isActive);
-  //   }
-
-  //   this.displayedUsers = users;
-  // }
-
-  onStatusChange() {
-    this.currentPage = 1;
-    this.refreshDisplayedUsers();
-    this.updateUrl();
-  }
 
   private updateUrl() {
     this.router.navigate([], {
@@ -224,7 +198,8 @@ export class UserListComponent implements OnInit {
         page: this.currentPage,
         itemsPerPage: this.itemsPerPage,
         search: this.searchTerm || null,
-        statusFilter: this.statusFilter,
+        status: this.statusFilter,
+        role: this.roleFilter !== 'all' ? this.roleFilter : null,
       },
       queryParamsHandling: 'merge',
     });

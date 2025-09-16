@@ -14,37 +14,6 @@ export class UserService {
     window.localStorage.setItem('saved-users-data', JSON.stringify(this.users));
   }
 
-  // getPaginatedUsers(
-  //   page: number,
-  //   itemsPerPage: number,
-  //   status: 'all' | 'active' | 'inactive' = 'all',
-  //   searchText: string
-  // ): { users: User[]; totalUsers: number } {
-  //   //Filtered Users
-  //   let filtered = [...this.users];
-  //   if (status === 'active') filtered = filtered.filter((u) => u.isActive);
-  //   else if (status === 'inactive')
-  //     filtered = filtered.filter((u) => !u.isActive);
-
-  //   //Search Filter
-  //   if (searchText) {
-  //     const lowerSearchText = searchText.toLowerCase();
-  //     filtered = filtered.filter(
-  //       (u) =>
-  //         u.name.toLowerCase().includes(lowerSearchText) ||
-  //         u.email.toLowerCase().includes(lowerSearchText) ||
-  //         u.phone.toLowerCase().includes(lowerSearchText)
-  //     );
-  //   }
-
-  //   //Paginated Users
-  //   const totalUsers = filtered.length;
-  //   const start = (page - 1) * itemsPerPage;
-  //   const paginatedUsers = filtered.slice(start, start + itemsPerPage);
-
-  //   return { users: paginatedUsers, totalUsers };
-  // }
-
   getPaginatedUsers(
     page: number,
     itemsPerPage: number,
@@ -82,17 +51,6 @@ export class UserService {
     return { users: paginatedUsers, totalUsers };
   }
 
-  // getPaginatedUsers(
-  //   page: number,
-  //   perPage: number,
-  //   term: string = '',
-  //   statusFilter: 'all' | 'active' | 'inactive' = 'all'
-  // ): User[] {
-  //   const filtered = this.filterUsers(term, statusFilter);
-  //   const start = (page - 1) * perPage;
-  //   return filtered.slice(start, start + perPage);
-  // }
-
   getUserById(id: number) {
     return this.users.find((user) => user.id === id);
   }
@@ -123,42 +81,5 @@ export class UserService {
   deleteUser(id: number) {
     this.users = this.users.filter((u) => u.id !== id);
     this.saveToLocalStorage();
-  }
-
-  filterUsers(
-    term?: string,
-    statusFilter: 'all' | 'active' | 'inactive' = 'all'
-  ): User[] {
-    let filtered = this.users;
-
-    // Search term filter
-    if (term) {
-      filtered = filtered.filter(
-        (user) =>
-          user.name.toLowerCase().includes(term.toLowerCase()) ||
-          user.email.toLowerCase().includes(term.toLowerCase()) ||
-          user.address.toLowerCase().includes(term.toLowerCase())
-      );
-    }
-
-    // Status filter
-    if (statusFilter === 'active') {
-      filtered = filtered.filter((user) => user.isActive);
-    } else if (statusFilter === 'inactive') {
-      filtered = filtered.filter((user) => !user.isActive);
-    }
-
-    return filtered;
-  }
-
-  // getTotalPages(perPage: number, term: string): number {
-  //   return Math.ceil(this.filterUsers(term).length / perPage);
-  // }
-  getTotalPages(
-    perPage: number,
-    term: string = '',
-    statusFilter: 'all' | 'active' | 'inactive' = 'all'
-  ): number {
-    return Math.ceil(this.filterUsers(term, statusFilter).length / perPage);
   }
 }

@@ -55,7 +55,7 @@ export const users: User[] = [
     address: '654 Maple St, Phoenix, AZ',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.User,
+    role: UserType.Admin,
   },
   {
     id: 6,
@@ -66,7 +66,7 @@ export const users: User[] = [
     address: '987 Cedar St, Philadelphia, PA',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserType.SuperAdmin,
   },
   {
     id: 7,
@@ -77,7 +77,7 @@ export const users: User[] = [
     address: '111 Birch St, San Antonio, TX',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserType.Admin,
   },
   {
     id: 8,
@@ -99,7 +99,7 @@ export const users: User[] = [
     address: '333 Spruce St, Dallas, TX',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserType.Author,
   },
   {
     id: 10,
@@ -121,7 +121,7 @@ export const users: User[] = [
     address: '555 Willow St, Austin, TX',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.User,
+    role: UserType.Editor,
   },
   {
     id: 12,
@@ -143,7 +143,7 @@ export const users: User[] = [
     address: '777 Chestnut St, Fort Worth, TX',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserType.Admin,
   },
   {
     id: 14,
@@ -165,7 +165,7 @@ export const users: User[] = [
     address: '999 Sycamore St, Charlotte, NC',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserType.SuperAdmin,
   },
   {
     id: 16,
@@ -176,7 +176,7 @@ export const users: User[] = [
     address: '1010 Magnolia St, Indianapolis, IN',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserType.Editor,
   },
   {
     id: 17,
@@ -187,7 +187,7 @@ export const users: User[] = [
     address: '1111 Palm St, San Francisco, CA',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.User,
+    role: UserType.Admin,
   },
   {
     id: 18,
@@ -209,7 +209,7 @@ export const users: User[] = [
     address: '1313 Cherry St, Denver, CO',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserType.Admin,
   },
   {
     id: 20,
@@ -220,6 +220,6 @@ export const users: User[] = [
     address: '1414 Dogwood St, Boston, MA',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.User,
+    role: UserType.SuperAdmin,
   },
 ];
