@@ -1,5 +1,5 @@
-import { UserType } from './models/enums/user-type';
-import { User } from './models/interfaces/user.model';
+import { UserType } from '../models/enums/user-type';
+import { User } from '../models/interfaces/user.model';
 
 export const users: User[] = [
   {

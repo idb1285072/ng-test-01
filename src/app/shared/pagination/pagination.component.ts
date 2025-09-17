@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { PageSize } from 'src/app/user/models/enums/page-size';
 
 export interface PaginationEvent {
   currentPage: number;
@@ -14,17 +15,19 @@ export class PaginationComponent {
   @Input() totalItems: number = 0;
   @Input() itemsPerPage: number = 5;
   @Input() currentPage: number = 1;
-  @Input() pageSizes: number[] = [5, 10, 20, 50];
+  @Input() pageSizes: number[] = Object.values(PageSize).filter(
+    (value) => typeof value === 'number'
+  ) as number[];
 
   @Output() pageChange = new EventEmitter<PaginationEvent>();
 
-  changePage(page: number) {
+  onChangePage(page: number) {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
     this.emitChange();
   }
 
-  changePageSize(size: number) {
+  onChangePageSize(size: number) {
     this.itemsPerPage = size;
     this.currentPage = 1;
     this.emitChange();

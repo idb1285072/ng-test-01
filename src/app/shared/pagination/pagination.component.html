@@ -1,22 +1,22 @@
 <div class="d-flex justify-content-between align-items-center mt-3">
-  <!-- Page size dropdown -->
   <div>
     <label for="itemsPerPage" class="me-2 fw-bold">Users per page:</label>
     <select
       id="itemsPerPage"
       class="form-select d-inline-block w-auto"
       [ngModel]="itemsPerPage"
-      (ngModelChange)="changePageSize($event)"
+      (ngModelChange)="onChangePageSize($event)"
     >
       <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
     </select>
   </div>
 
-  <!-- Pagination controls -->
   <nav *ngIf="totalPages > 1">
     <ul class="pagination mb-0">
       <li class="page-item" [class.disabled]="currentPage === 1">
-        <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
+        <a class="page-link" (click)="onChangePage(currentPage - 1)"
+          >Previous</a
+        >
       </li>
 
       <li
@@ -24,11 +24,11 @@
         *ngFor="let page of pages"
         [class.active]="page === currentPage"
       >
-        <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+        <a class="page-link" (click)="onChangePage(page)">{{ page }}</a>
       </li>
 
       <li class="page-item" [class.disabled]="currentPage === totalPages">
-        <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
+        <a class="page-link" (click)="onChangePage(currentPage + 1)">Next</a>
       </li>
     </ul>
   </nav>

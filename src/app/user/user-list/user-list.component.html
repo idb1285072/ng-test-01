@@ -71,7 +71,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of paginatedUsers; let i = index">
+        <tr *ngFor="let user of displayedUsers; let i = index">
           <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
           <td>{{ user.name }}</td>
           <td>{{ user.age }}</td>
@@ -102,12 +102,16 @@
             >
               Edit
             </button>
-            <button class="btn btn-danger btn-sm" (click)="onDeleteUser(user)" *ngIf="!user.isActive">
+            <button
+              class="btn btn-danger btn-sm"
+              (click)="onDeleteUser(user)"
+              *ngIf="!user.isActive"
+            >
               Delete
             </button>
           </td>
         </tr>
-        <tr *ngIf="paginatedUsers.length === 0">
+        <tr *ngIf="displayedUsers.length === 0">
           <td colspan="10" class="text-center">No users found.</td>
         </tr>
       </tbody>

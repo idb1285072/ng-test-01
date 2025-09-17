@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from './models/interfaces/user.model';
-import { users } from './user-data';
+import { users } from './data/user-data';
 import { UserType } from './models/enums/user-type';
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -49,15 +49,15 @@ export class UserService {
     return { users: paginatedUsers, totalUsers };
   }
 
-  getUserById(id: number) {
-    return this.users.find((user) => user.id === id);
-  }
-
   addUser(user: User) {
     user.id =
       this.users.length > 0 ? Math.max(...this.users.map((u) => u.id)) + 1 : 1;
     this.users.push(user);
     this.saveToLocalStorage();
+  }
+
+  getUserById(id: number) {
+    return this.users.find((user) => user.id === id);
   }
 
   updateUser(updatedUser: User) {

@@ -13,7 +13,7 @@ import { debounceTime, Subject, Subscription } from 'rxjs';
 })
 export class UserListComponent implements OnInit, OnDestroy {
   private searchSubject$ = new Subject<string>();
-  private searchSubscription!: Subscription;
+  private searchSubscription?: Subscription;
   displayedUsers: User[] = [];
   searchTerm: string = '';
 
@@ -24,15 +24,9 @@ export class UserListComponent implements OnInit, OnDestroy {
   roleFilter: UserType | 'all' = 'all';
   totalUsers: number = 0;
 
-  roleOptions: UserType[] = [
-    UserType.SuperAdmin,
-    UserType.Admin,
-    UserType.Moderator,
-    UserType.Editor,
-    UserType.Author,
-    UserType.Contributor,
-    UserType.User,
-  ];
+  roleOptions: UserType[] = Object.values(UserType).filter(
+    (v) => typeof v === 'number'
+  ) as UserType[];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -67,19 +61,6 @@ export class UserListComponent implements OnInit, OnDestroy {
     return Math.ceil(this.totalUsers / this.itemsPerPage);
   }
 
-  changePage(page: number) {
-    const totalPages = this.totalPages();
-    if (page < 1) {
-      this.currentPage = 1;
-    } else if (page > totalPages) {
-      this.currentPage = totalPages > 0 ? totalPages : 1;
-    } else {
-      this.currentPage = page;
-    }
-    this.refreshDisplayedUsers();
-    this.updateUrl();
-  }
-
   onItemsPerPageChange() {
     this.reload(true);
   }
@@ -99,6 +80,12 @@ export class UserListComponent implements OnInit, OnDestroy {
   onToggleStatus(user: User) {
     this.userService.toggleStatus(user.id);
     this.refreshDisplayedUsers();
+    const totalPages = this.totalPages();
+    if (this.currentPage > totalPages) {
+      this.currentPage = totalPages > 0 ? totalPages : 1;
+      this.refreshDisplayedUsers();
+      this.updateUrl();
+    }
   }
 
   onAddUser() {
@@ -112,12 +99,13 @@ export class UserListComponent implements OnInit, OnDestroy {
   onDeleteUser(user: User) {
     if (confirm(`Are you sure you want to delete ${user.name}?`)) {
       this.userService.deleteUser(user.id);
+      this.refreshDisplayedUsers();
       const totalPages = this.totalPages();
       if (this.currentPage > totalPages) {
         this.currentPage = totalPages > 0 ? totalPages : 1;
+        this.refreshDisplayedUsers();
+        this.updateUrl();
       }
-      this.refreshDisplayedUsers();
-      this.updateUrl();
     }
   }
 
@@ -129,43 +117,20 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   getRoleName(role: UserType) {
-    switch (role) {
-      case UserType.SuperAdmin:
-        return 'SuperAdmin';
-      case UserType.Admin:
-        return 'Admin';
-      case UserType.Moderator:
-        return 'Moderator';
-      case UserType.Editor:
-        return 'Editor';
-      case UserType.Author:
-        return 'Author';
-      case UserType.Contributor:
-        return 'Contributor';
-      case UserType.User:
-        return 'User';
-      default:
-        return 'Unknown';
-    }
+    return UserType[role] || 'Unknown';
   }
 
   getRoleClass(role: UserType) {
-    switch (role) {
-      case UserType.SuperAdmin:
-        return 'bg-dark';
-      case UserType.Admin:
-        return 'bg-primary';
-      case UserType.Moderator:
-        return 'bg-warning';
-      case UserType.Editor:
-        return 'bg-info';
-      case UserType.Author:
-        return 'bg-success';
-      case UserType.Contributor:
-        return 'bg-secondary';
-      case UserType.User:
-        return 'bg-light text-dark';
-    }
+    const classes: Record<UserType, string> = {
+      [UserType.SuperAdmin]: 'bg-dark',
+      [UserType.Admin]: 'bg-primary',
+      [UserType.Moderator]: 'bg-warning',
+      [UserType.Editor]: 'bg-info',
+      [UserType.Author]: 'bg-success',
+      [UserType.Contributor]: 'bg-secondary',
+      [UserType.User]: 'bg-light text-dark',
+    };
+    return classes[role] || '';
   }
 
   private updateUrl() {
@@ -183,15 +148,15 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   private refreshDisplayedUsers() {
-    const result = this.userService.getPaginatedUsers(
+    const { users, totalUsers } = this.userService.getPaginatedUsers(
       this.currentPage,
       this.itemsPerPage,
       this.statusFilter,
       this.searchTerm,
       this.roleFilter
     );
-    this.displayedUsers = result.users;
-    this.totalUsers = result.totalUsers;
+    this.displayedUsers = users;
+    this.totalUsers = totalUsers;
   }
 
   private reload(resetPage: boolean = false) {
@@ -200,11 +165,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.updateUrl();
   }
 
-  get paginatedUsers(): User[] {
-    return this.displayedUsers;
-  }
-
   ngOnDestroy(): void {
-    if (this.searchSubscription) this.searchSubscription.unsubscribe();
+    this.searchSubscription?.unsubscribe();
   }
 }
