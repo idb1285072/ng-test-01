@@ -15,13 +15,13 @@ export class UserListComponent implements OnInit, OnDestroy {
   private searchSubject$ = new Subject<string>();
   private searchSubscription?: Subscription;
   displayedUsers: User[] = [];
-  searchTerm: string = '';
+  totalUsers: number = 0;
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
   statusFilter: 'all' | 'active' | 'inactive' = 'all';
   roleFilter: UserType | 'all' = 'all';
-  totalUsers: number = 0;
+  searchTerm: string = '';
 
   roleOptions: UserType[] = Object.values(UserType).filter(
     (v) => typeof v === 'number'

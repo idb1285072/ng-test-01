@@ -9,6 +9,7 @@ import { NavBarComponent } from './shared/nav-bar/nav-bar.component';
 import { NotFoundComponent } from './shared/not-found/not-found.component';
 import { PaginationComponent } from './shared/pagination/pagination.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RangePipe } from './shared/pipes/range.pipe';
 
 @NgModule({
   declarations: [
@@ -17,15 +18,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     UserEditComponent,
     NavBarComponent,
     NotFoundComponent,
-    PaginationComponent
+    PaginationComponent,
+    RangePipe,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
+  imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
