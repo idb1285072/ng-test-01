@@ -28,12 +28,12 @@ export class UserService {
 
     // Search filter
     if (searchText) {
-      const lower = searchText.toLowerCase();
+      const lower = searchText.trim().toLowerCase();
       filtered = filtered.filter(
         (u) =>
           u.name.toLowerCase().includes(lower) ||
           u.email.toLowerCase().includes(lower) ||
-          u.phone.toLowerCase().includes(lower)
+          u.address.toLowerCase().includes(lower)
       );
     }
 

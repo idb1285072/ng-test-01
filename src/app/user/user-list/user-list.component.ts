@@ -17,7 +17,6 @@ export class UserListComponent implements OnInit, OnDestroy {
   displayedUsers: User[] = [];
   searchTerm: string = '';
 
-  pageSizes: number[] = [5, 10, 20, 50];
   currentPage: number = 1;
   itemsPerPage: number = 5;
   statusFilter: 'all' | 'active' | 'inactive' = 'all';
@@ -39,7 +38,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       this.currentPage = +params['page'] || 1;
       this.itemsPerPage = +params['itemsPerPage'] || 5;
       this.searchTerm = params['search'] || '';
-      this.statusFilter = params['status'] || 'all';
+      this.statusFilter = params['status'] || 'active';
 
       if (params['role'] && params['role'] !== 'all') {
         this.roleFilter = +params['role'];

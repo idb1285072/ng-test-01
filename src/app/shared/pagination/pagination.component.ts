@@ -15,11 +15,11 @@ export class PaginationComponent {
   @Input() totalItems: number = 0;
   @Input() itemsPerPage: number = 5;
   @Input() currentPage: number = 1;
-  @Input() pageSizes: number[] = Object.values(PageSize).filter(
+  @Output() pageChange = new EventEmitter<PaginationEvent>();
+
+  pageSizes: number[] = Object.values(PageSize).filter(
     (value) => typeof value === 'number'
   ) as number[];
-
-  @Output() pageChange = new EventEmitter<PaginationEvent>();
 
   onChangePage(page: number) {
     if (page < 1 || page > this.totalPages) return;

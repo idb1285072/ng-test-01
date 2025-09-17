@@ -32,7 +32,7 @@ export class UserEditComponent implements OnInit {
       phone: [''],
       address: [''],
       registeredDate: [new Date().toISOString().split('T')[0]],
-      isActive: [true],
+      isActive: [false],
       role: [UserType.User, Validators.required],
     });
 
