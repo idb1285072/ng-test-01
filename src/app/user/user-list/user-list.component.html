@@ -39,7 +39,7 @@
       </select>
     </div>
 
-    <button class="btn btn-success" (click)="addUser()">Add User</button>
+    <button class="btn btn-success" (click)="onAddUser()">Add User</button>
   </div>
 
   <!-- Search -->
@@ -49,7 +49,7 @@
       class="form-control"
       placeholder="Search by name, email or phone..."
       [(ngModel)]="searchTerm"
-      (ngModelChange)="onSearchChange()"
+      (ngModelChange)="onSearchChange($event)"
     />
   </div>
 
@@ -88,7 +88,7 @@
             <span
               class="badge"
               [ngClass]="user.isActive ? 'bg-success' : 'bg-danger'"
-              (click)="toggleStatus(user)"
+              (click)="onToggleStatus(user)"
               style="cursor: pointer"
             >
               {{ user.isActive ? "Active" : "Inactive" }}
@@ -97,12 +97,12 @@
           <td>
             <button
               class="btn btn-primary btn-sm me-1"
-              (click)="editUser(user)"
+              (click)="onEditUser(user)"
               *ngIf="user.isActive"
             >
               Edit
             </button>
-            <button class="btn btn-danger btn-sm" (click)="deleteUser(user)" *ngIf="!user.isActive">
+            <button class="btn btn-danger btn-sm" (click)="onDeleteUser(user)" *ngIf="!user.isActive">
               Delete
             </button>
           </td>

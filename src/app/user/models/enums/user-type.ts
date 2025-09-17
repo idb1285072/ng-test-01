@@ -7,12 +7,3 @@ export enum UserType {
   Contributor = 6,
   User = 7,
 }
-// export enum UserType {
-//   SuperAdmin = 'SuperAdmin',
-//   Admin = 'Admin',
-//   Moderator = 'Moderator',
-//   Editor = 'Editor',
-//   Author = 'Author',
-//   Contributor = 'Contributor',
-//   User = 'User',
-// }

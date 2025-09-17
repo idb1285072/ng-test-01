@@ -1,18 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { User } from '../models/interfaces/user.model';
 import { UserService } from '../user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaginationEvent } from 'src/app/shared/pagination/pagination.component';
 import { UserType } from '../models/enums/user-type';
+import { debounceTime, Subject, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.css'],
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, OnDestroy {
+  private searchSubject$ = new Subject<string>();
+  private searchSubscription!: Subscription;
   displayedUsers: User[] = [];
   searchTerm: string = '';
+
   pageSizes: number[] = [5, 10, 20, 50];
   currentPage: number = 1;
   itemsPerPage: number = 5;
@@ -36,16 +40,6 @@ export class UserListComponent implements OnInit {
     private userService: UserService
   ) {}
 
-  // ngOnInit(): void {
-  //   this.activatedRoute.queryParams.subscribe((params) => {
-  //     this.currentPage = +params['page'] || 1;
-  //     this.itemsPerPage = +params['itemsPerPage'] || 5;
-  //     this.searchTerm = params['search'] || '';
-  //     this.statusFilter = params['status'] || 'all';
-  //     this.roleFilter = params['role'] || 'all';
-  //     this.refreshDisplayedUsers();
-  //   });
-  // }
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe((params) => {
       this.currentPage = +params['page'] || 1;
@@ -53,41 +47,24 @@ export class UserListComponent implements OnInit {
       this.searchTerm = params['search'] || '';
       this.statusFilter = params['status'] || 'all';
 
-      // Fix role parsing
       if (params['role'] && params['role'] !== 'all') {
-        this.roleFilter = +params['role']; // convert string to number for enum
+        this.roleFilter = +params['role'];
       } else {
         this.roleFilter = 'all';
       }
-
       this.refreshDisplayedUsers();
     });
-  }
 
-  get paginatedUsers(): User[] {
-    return this.displayedUsers;
+    this.searchSubscription = this.searchSubject$
+      .pipe(debounceTime(1000))
+      .subscribe((text) => {
+        this.searchTerm = text;
+        this.reload(true);
+      });
   }
 
   totalPages(): number {
     return Math.ceil(this.totalUsers / this.itemsPerPage);
-  }
-
-  private refreshDisplayedUsers() {
-    const result = this.userService.getPaginatedUsers(
-      this.currentPage,
-      this.itemsPerPage,
-      this.statusFilter,
-      this.searchTerm,
-      this.roleFilter
-    );
-    this.displayedUsers = result.users;
-    this.totalUsers = result.totalUsers;
-  }
-
-  private reload(resetPage: boolean = false) {
-    if (resetPage) this.currentPage = 1;
-    this.refreshDisplayedUsers();
-    this.updateUrl();
   }
 
   changePage(page: number) {
@@ -115,16 +92,24 @@ export class UserListComponent implements OnInit {
     this.reload(true);
   }
 
-  onSearchChange() {
-    this.reload(true);
+  onSearchChange(searchTerm: string) {
+    this.searchSubject$.next(searchTerm);
   }
 
-  toggleStatus(user: User) {
+  onToggleStatus(user: User) {
     this.userService.toggleStatus(user.id);
     this.refreshDisplayedUsers();
   }
 
-  deleteUser(user: User) {
+  onAddUser() {
+    this.router.navigate(['/user-add']);
+  }
+
+  onEditUser(user: User) {
+    this.router.navigate(['/user-edit', user.id]);
+  }
+
+  onDeleteUser(user: User) {
     if (confirm(`Are you sure you want to delete ${user.name}?`)) {
       this.userService.deleteUser(user.id);
       const totalPages = this.totalPages();
@@ -134,14 +119,6 @@ export class UserListComponent implements OnInit {
       this.refreshDisplayedUsers();
       this.updateUrl();
     }
-  }
-
-  editUser(user: User) {
-    this.router.navigate(['/user-edit', user.id]);
-  }
-
-  addUser() {
-    this.router.navigate(['/user-add']);
   }
 
   onPaginationChange(event: PaginationEvent) {
@@ -203,5 +180,31 @@ export class UserListComponent implements OnInit {
       },
       queryParamsHandling: 'merge',
     });
+  }
+
+  private refreshDisplayedUsers() {
+    const result = this.userService.getPaginatedUsers(
+      this.currentPage,
+      this.itemsPerPage,
+      this.statusFilter,
+      this.searchTerm,
+      this.roleFilter
+    );
+    this.displayedUsers = result.users;
+    this.totalUsers = result.totalUsers;
+  }
+
+  private reload(resetPage: boolean = false) {
+    if (resetPage) this.currentPage = 1;
+    this.refreshDisplayedUsers();
+    this.updateUrl();
+  }
+
+  get paginatedUsers(): User[] {
+    return this.displayedUsers;
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchSubscription) this.searchSubscription.unsubscribe();
   }
 }

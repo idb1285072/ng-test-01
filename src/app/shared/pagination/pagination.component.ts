@@ -10,17 +10,13 @@ export interface PaginationEvent {
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.css'],
 })
-export class PaginationComponent  {
+export class PaginationComponent {
   @Input() totalItems: number = 0;
-  @Input() itemsPerPage: number = 10;
+  @Input() itemsPerPage: number = 5;
   @Input() currentPage: number = 1;
   @Input() pageSizes: number[] = [5, 10, 20, 50];
 
   @Output() pageChange = new EventEmitter<PaginationEvent>();
-
-  get totalPages(): number {
-    return Math.ceil(this.totalItems / this.itemsPerPage) || 1;
-  }
 
   changePage(page: number) {
     if (page < 1 || page > this.totalPages) return;
@@ -30,7 +26,7 @@ export class PaginationComponent  {
 
   changePageSize(size: number) {
     this.itemsPerPage = size;
-    this.currentPage = 1; // reset to first page
+    this.currentPage = 1;
     this.emitChange();
   }
 
@@ -39,6 +35,10 @@ export class PaginationComponent  {
       currentPage: this.currentPage,
       itemsPerPage: this.itemsPerPage,
     });
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.totalItems / this.itemsPerPage) || 1;
   }
 
   get pages(): number[] {

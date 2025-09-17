@@ -5,13 +5,11 @@ import { UserType } from './models/enums/user-type';
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private users: User[] = [];
+
   constructor() {
     const savedData = window.localStorage.getItem('saved-users-data');
     this.users = savedData ? JSON.parse(savedData) : [...users];
     this.saveToLocalStorage();
-  }
-  private saveToLocalStorage() {
-    window.localStorage.setItem('saved-users-data', JSON.stringify(this.users));
   }
 
   getPaginatedUsers(
@@ -81,5 +79,9 @@ export class UserService {
   deleteUser(id: number) {
     this.users = this.users.filter((u) => u.id !== id);
     this.saveToLocalStorage();
+  }
+
+  private saveToLocalStorage() {
+    window.localStorage.setItem('saved-users-data', JSON.stringify(this.users));
   }
 }

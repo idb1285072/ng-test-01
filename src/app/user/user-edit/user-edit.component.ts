@@ -15,6 +15,7 @@ export class UserEditComponent implements OnInit {
   isEditMode: boolean = false;
   userId!: number;
   UserType = UserType;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -62,7 +63,7 @@ export class UserEditComponent implements OnInit {
     this.router.navigate(['/users']);
   }
 
-  cancel() {
+  onCancel() {
     this.router.navigate(['/users']);
   }
 }
