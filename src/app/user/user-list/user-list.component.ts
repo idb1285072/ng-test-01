@@ -57,10 +57,6 @@ export class UserListComponent implements OnInit, OnDestroy {
       });
   }
 
-  totalPages(): number {
-    return Math.ceil(this.totalUsers / this.itemsPerPage);
-  }
-
   onItemsPerPageChange() {
     this.reload(true);
   }
@@ -80,7 +76,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   onToggleStatus(user: User) {
     this.userService.toggleStatus(user.id);
     this.refreshDisplayedUsers();
-    const totalPages = this.totalPages();
+    const totalPages = Math.ceil(this.totalUsers / this.itemsPerPage);
     if (this.currentPage > totalPages) {
       this.currentPage = totalPages > 0 ? totalPages : 1;
       this.refreshDisplayedUsers();
@@ -100,7 +96,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     if (confirm(`Are you sure you want to delete ${user.name}?`)) {
       this.userService.deleteUser(user.id);
       this.refreshDisplayedUsers();
-      const totalPages = this.totalPages();
+      const totalPages = Math.ceil(this.totalUsers / this.itemsPerPage);
       if (this.currentPage > totalPages) {
         this.currentPage = totalPages > 0 ? totalPages : 1;
         this.refreshDisplayedUsers();
