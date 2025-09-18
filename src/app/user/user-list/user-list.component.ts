@@ -13,6 +13,14 @@ import {
 import { UserInterface } from '../types/user.interface';
 import { UserTypeEnum } from '../types/enums/user-type.enum';
 import { StatusTypeEnum } from '../types/enums/status-type.enum';
+import {
+  Form,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { uniqueEmailValidator } from 'src/app/shared/validators/unique-email.validator';
 
 @Component({
   selector: 'app-user-list',
@@ -24,6 +32,11 @@ export class UserListComponent implements OnInit, OnDestroy {
   private searchSubscription?: Subscription;
   displayedUsers: UserInterface[] = [];
   totalUsers: number = 0;
+  inlineEditUserId: number | null = null;
+  inlineEditForm!: FormGroup;
+  isBulkUpdate: boolean = false;
+  bulkForm!: FormGroup;
+  bulkFormArray!: FormArray;
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
@@ -42,6 +55,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   ) as UserTypeEnum[];
 
   constructor(
+    private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private userService: UserService
@@ -73,6 +87,72 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.searchTerm = text;
         this.reload(true);
       });
+  }
+
+  onInlineEdit(user: UserInterface) {
+    this.inlineEditUserId = user.id;
+    this.inlineEditForm = this.fb.group({
+      name: [user.name],
+      age: [user.age],
+      email: [
+        user.email,
+        [Validators.email, Validators.required, uniqueEmailValidator],
+      ],
+      phone: [user.phone],
+      address: [user.address],
+      registeredDate: [user.registeredDate],
+      role: [user.role],
+      isActive: [user.isActive],
+    });
+  }
+
+  onCancelInlineEdit() {
+    this.inlineEditUserId = null;
+    // this.inlineEditForm = null;
+  }
+  onSaveInlineEdit(user: UserInterface) {
+    if (this.inlineEditForm && this.inlineEditForm.valid) {
+      const updatedUser = { ...user, ...this.inlineEditForm.value };
+      this.userService.updateUser(updatedUser);
+      this.onCancelInlineEdit();
+      this.refreshDisplayedUsers();
+    }
+  }
+
+  onBulkUpdateUsers(loadedUsers: UserInterface[]) {
+    this.isBulkUpdate = true;
+    this.bulkFormArray = this.fb.array(
+      loadedUsers.map((user) =>
+        this.fb.group({
+          id: [user.id],
+          name: [user.name],
+          age: [user.age],
+          email: [user.email],
+          phone: [user.phone],
+          address: [user.address],
+          registeredDate: [user.registeredDate],
+          role: [user.role],
+          isActive: [user.isActive],
+        })
+      )
+    );
+
+    this.bulkForm = this.fb.group({
+      users: this.bulkFormArray,
+    });
+  }
+
+  onSaveBulkUpdate() {
+    if (this.bulkForm.valid) {
+      const updatedUsers: UserInterface[] = this.bulkForm.value.users;
+      updatedUsers.forEach((user) => this.userService.updateUser(user));
+      this.isBulkUpdate = false;
+      this.refreshDisplayedUsers();
+    }
+  }
+
+  onCancelBulkUpdate() {
+    this.isBulkUpdate = false;
   }
 
   onItemsPerPageChange() {

@@ -15,6 +15,10 @@ export class UserService {
     this.saveToLocalStorage();
   }
 
+  getAllEmails(): string[] {
+    return this.users.map((user: UserInterface) => user.email);
+  }
+  
   getPaginatedUsers(
     page: number,
     itemsPerPage: number,
