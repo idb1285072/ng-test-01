@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { PageSize } from 'src/app/shared/models/enums/page-size';
+import { PageSizeEnum } from 'src/app/shared/types/enums/page-size.enum';
 
 export interface PaginationEvent {
   currentPage: number;
@@ -17,7 +17,7 @@ export class PaginationComponent {
   @Input() currentPage: number = 1;
   @Output() pageChange = new EventEmitter<PaginationEvent>();
 
-  pageSizes: number[] = Object.values(PageSize).filter(
+  pageSizes: number[] = Object.values(PageSizeEnum).filter(
     (value) => typeof value === 'number'
   ) as number[];
 
