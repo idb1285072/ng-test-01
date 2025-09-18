@@ -48,7 +48,6 @@ export class UserEditComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.userForm.controls['age']);
     if (this.userForm.invalid) return;
 
     const user: User = this.userForm.value;

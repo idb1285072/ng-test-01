@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { User } from './models/interfaces/user.model';
 import { users } from './data/user-data';
 import { UserType } from './models/enums/user-type';
+import { StatusType } from './models/types/status-type';
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private users: User[] = [];
@@ -15,7 +16,7 @@ export class UserService {
   getPaginatedUsers(
     page: number,
     itemsPerPage: number,
-    status: 'all' | 'active' | 'inactive' = 'all',
+    status: StatusType = 'all',
     searchText: string = '',
     roleFilter: UserType | 'all' = 'all'
   ): { users: User[]; totalUsers: number } {
@@ -69,7 +70,7 @@ export class UserService {
   }
 
   toggleStatus(id: number) {
-    const user = this.users.find((u) => u.id === id);
+    const user = this.getUserById(id);
     if (user) {
       user.isActive = !user.isActive;
       this.saveToLocalStorage();

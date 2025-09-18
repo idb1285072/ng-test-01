@@ -4,7 +4,13 @@ import { UserService } from '../user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaginationEvent } from 'src/app/shared/pagination/pagination.component';
 import { UserType } from '../models/enums/user-type';
-import { debounceTime, Subject, Subscription } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  Subject,
+  Subscription,
+} from 'rxjs';
+import { StatusType } from '../models/types/status-type';
 
 @Component({
   selector: 'app-user-list',
@@ -19,7 +25,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
-  statusFilter: 'all' | 'active' | 'inactive' = 'all';
+  statusFilter: StatusType = 'all';
   roleFilter: UserType | 'all' = 'all';
   searchTerm: string = '';
 
@@ -49,7 +55,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     });
 
     this.searchSubscription = this.searchSubject$
-      .pipe(debounceTime(1000))
+      .pipe(debounceTime(1000), distinctUntilChanged())
       .subscribe((text) => {
         this.searchTerm = text;
         this.reload(true);

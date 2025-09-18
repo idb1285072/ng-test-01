@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { PageSize } from 'src/app/user/models/enums/page-size';
+import { PageSize } from 'src/app/shared/models/enums/page-size';
 
 export interface PaginationEvent {
   currentPage: number;
