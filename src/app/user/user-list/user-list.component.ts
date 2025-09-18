@@ -1,16 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { User } from '../models/interfaces/user.model';
+
 import { UserService } from '../user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaginationEvent } from 'src/app/shared/pagination/pagination.component';
-import { UserType } from '../models/enums/user-type';
+
 import {
   debounceTime,
   distinctUntilChanged,
   Subject,
   Subscription,
 } from 'rxjs';
-import { StatusType } from '../models/types/status-type';
+import { UserInterface } from '../types/user.interface';
+import { UserTypeEnum } from '../types/enums/user-type.enum';
+import { StatusTypeEnum } from '../types/enums/status-type.enum';
 
 @Component({
   selector: 'app-user-list',
@@ -20,18 +22,24 @@ import { StatusType } from '../models/types/status-type';
 export class UserListComponent implements OnInit, OnDestroy {
   private searchSubject$ = new Subject<string>();
   private searchSubscription?: Subscription;
-  displayedUsers: User[] = [];
+  displayedUsers: UserInterface[] = [];
   totalUsers: number = 0;
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
-  statusFilter: StatusType = 'all';
-  roleFilter: UserType | 'all' = 'all';
+  statusFilter: StatusTypeEnum = StatusTypeEnum.all;
+  roleFilter: UserTypeEnum | 'all' = 'all';
   searchTerm: string = '';
 
-  roleOptions: UserType[] = Object.values(UserType).filter(
+  statusOptions = [
+    { label: 'all', value: StatusTypeEnum.all },
+    { label: 'active', value: StatusTypeEnum.active },
+    { label: 'inactive', value: StatusTypeEnum.inactive },
+  ];
+
+  roleOptions: UserTypeEnum[] = Object.values(UserTypeEnum).filter(
     (v) => typeof v === 'number'
-  ) as UserType[];
+  ) as UserTypeEnum[];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -44,7 +52,12 @@ export class UserListComponent implements OnInit, OnDestroy {
       this.currentPage = +params['page'] || 1;
       this.itemsPerPage = +params['itemsPerPage'] || 5;
       this.searchTerm = params['search'] || '';
-      this.statusFilter = params['status'] || 'active';
+      const statusParam = params['status'];
+      if (statusParam && !isNaN(+statusParam)) {
+        this.statusFilter = +statusParam as StatusTypeEnum;
+      } else {
+        this.statusFilter = StatusTypeEnum.active;
+      }
 
       if (params['role'] && params['role'] !== 'all') {
         this.roleFilter = +params['role'];
@@ -78,7 +91,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.searchSubject$.next(searchTerm);
   }
 
-  onToggleStatus(user: User) {
+  onToggleStatus(user: UserInterface) {
     this.userService.toggleStatus(user.id);
     this.refreshDisplayedUsers();
     const totalPages = Math.ceil(this.totalUsers / this.itemsPerPage);
@@ -93,11 +106,11 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/user-add']);
   }
 
-  onEditUser(user: User) {
+  onEditUser(user: UserInterface) {
     this.router.navigate(['/user-edit', user.id]);
   }
 
-  onDeleteUser(user: User) {
+  onDeleteUser(user: UserInterface) {
     if (confirm(`Are you sure you want to delete ${user.name}?`)) {
       this.userService.deleteUser(user.id);
       this.refreshDisplayedUsers();
@@ -117,19 +130,19 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.updateUrl();
   }
 
-  getRoleName(role: UserType) {
-    return UserType[role] || 'Unknown';
+  getRoleName(role: UserTypeEnum) {
+    return UserTypeEnum[role] || 'Unknown';
   }
 
-  getRoleClass(role: UserType) {
-    const classes: Record<UserType, string> = {
-      [UserType.SuperAdmin]: 'bg-dark',
-      [UserType.Admin]: 'bg-primary',
-      [UserType.Moderator]: 'bg-warning',
-      [UserType.Editor]: 'bg-info',
-      [UserType.Author]: 'bg-success',
-      [UserType.Contributor]: 'bg-secondary',
-      [UserType.User]: 'bg-light text-dark',
+  getRoleClass(role: UserTypeEnum) {
+    const classes: Record<UserTypeEnum, string> = {
+      [UserTypeEnum.SuperAdmin]: 'bg-dark',
+      [UserTypeEnum.Admin]: 'bg-primary',
+      [UserTypeEnum.Moderator]: 'bg-warning',
+      [UserTypeEnum.Editor]: 'bg-info',
+      [UserTypeEnum.Author]: 'bg-success',
+      [UserTypeEnum.Contributor]: 'bg-secondary',
+      [UserTypeEnum.User]: 'bg-light text-dark',
     };
     return classes[role] || '';
   }

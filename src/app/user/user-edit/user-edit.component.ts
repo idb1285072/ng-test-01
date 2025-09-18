@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../user.service';
-import { User } from '../models/interfaces/user.model';
-import { UserType } from '../models/enums/user-type';
+import { UserTypeEnum } from '../types/enums/user-type.enum';
+import { UserInterface } from '../types/user.interface';
+
 
 @Component({
   selector: 'app-user-edit',
@@ -14,7 +15,7 @@ export class UserEditComponent implements OnInit {
   userForm!: FormGroup;
   isEditMode: boolean = false;
   userId!: number;
-  UserType = UserType;
+  UserType = UserTypeEnum;
 
   constructor(
     private fb: FormBuilder,
@@ -33,7 +34,7 @@ export class UserEditComponent implements OnInit {
       address: [''],
       registeredDate: [new Date().toISOString().split('T')[0]],
       isActive: [false],
-      role: [UserType.User, Validators.required],
+      role: [UserTypeEnum.User, Validators.required],
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -50,7 +51,7 @@ export class UserEditComponent implements OnInit {
   onSubmit() {
     if (this.userForm.invalid) return;
 
-    const user: User = this.userForm.value;
+    const user: UserInterface = this.userForm.value;
 
     if (this.isEditMode) {
       this.userService.updateUser(user);

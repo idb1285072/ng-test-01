@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import { User } from './models/interfaces/user.model';
+
 import { users } from './data/user-data';
-import { UserType } from './models/enums/user-type';
-import { StatusType } from './models/types/status-type';
+import { UserInterface } from './types/user.interface';
+import { UserTypeEnum } from './types/enums/user-type.enum';
+import { StatusTypeEnum } from './types/enums/status-type.enum';
+
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private users: User[] = [];
+  private users: UserInterface[] = [];
 
   constructor() {
     const savedData = window.localStorage.getItem('saved-users-data');
@@ -16,16 +18,19 @@ export class UserService {
   getPaginatedUsers(
     page: number,
     itemsPerPage: number,
-    status: StatusType = 'all',
+    status: StatusTypeEnum = StatusTypeEnum.all,
     searchText: string = '',
-    roleFilter: UserType | 'all' = 'all'
-  ): { users: User[]; totalUsers: number } {
+    roleFilter: UserTypeEnum | 'all' = 'all'
+  ): { users: UserInterface[]; totalUsers: number } {
     let filtered = [...this.users];
 
     // Status filter
-    if (status === 'active') filtered = filtered.filter((u) => u.isActive);
-    else if (status === 'inactive')
+    if (status === StatusTypeEnum.active)
+      filtered = filtered.filter((u) => u.isActive);
+    else if (status === StatusTypeEnum.inactive)
       filtered = filtered.filter((u) => !u.isActive);
+
+    console.log(filtered, status, StatusTypeEnum.active);
 
     // Search filter
     if (searchText) {
@@ -50,7 +55,7 @@ export class UserService {
     return { users: paginatedUsers, totalUsers };
   }
 
-  addUser(user: User) {
+  addUser(user: UserInterface) {
     user.id =
       this.users.length > 0 ? Math.max(...this.users.map((u) => u.id)) + 1 : 1;
     this.users.push(user);
@@ -61,7 +66,7 @@ export class UserService {
     return this.users.find((user) => user.id === id);
   }
 
-  updateUser(updatedUser: User) {
+  updateUser(updatedUser: UserInterface) {
     const index = this.users.findIndex((u) => u.id === updatedUser.id);
     if (index !== -1) {
       this.users[index] = updatedUser;

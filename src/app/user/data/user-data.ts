@@ -1,7 +1,8 @@
-import { UserType } from '../models/enums/user-type';
-import { User } from '../models/interfaces/user.model';
+import { UserTypeEnum } from "../types/enums/user-type.enum";
+import { UserInterface } from "../types/user.interface";
 
-export const users: User[] = [
+
+export const users: UserInterface[] = [
   {
     id: 1,
     name: 'John Doe',
@@ -11,7 +12,7 @@ export const users: User[] = [
     address: '123 Main St, New York, NY',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.Admin,
+    role: UserTypeEnum.Admin,
   },
   {
     id: 2,
@@ -22,7 +23,7 @@ export const users: User[] = [
     address: '456 Elm St, Los Angeles, CA',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.SuperAdmin,
+    role: UserTypeEnum.SuperAdmin,
   },
   {
     id: 3,
@@ -33,7 +34,7 @@ export const users: User[] = [
     address: '789 Oak St, Chicago, IL',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.Contributor,
+    role: UserTypeEnum.Contributor,
   },
   {
     id: 4,
@@ -44,7 +45,7 @@ export const users: User[] = [
     address: '321 Pine St, Houston, TX',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserTypeEnum.User,
   },
   {
     id: 5,
@@ -55,7 +56,7 @@ export const users: User[] = [
     address: '654 Maple St, Phoenix, AZ',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.Admin,
+    role: UserTypeEnum.Admin,
   },
   {
     id: 6,
@@ -66,7 +67,7 @@ export const users: User[] = [
     address: '987 Cedar St, Philadelphia, PA',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.SuperAdmin,
+    role: UserTypeEnum.SuperAdmin,
   },
   {
     id: 7,
@@ -77,7 +78,7 @@ export const users: User[] = [
     address: '111 Birch St, San Antonio, TX',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.Admin,
+    role: UserTypeEnum.Admin,
   },
   {
     id: 8,
@@ -88,7 +89,7 @@ export const users: User[] = [
     address: '222 Walnut St, San Diego, CA',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.User,
+    role: UserTypeEnum.User,
   },
   {
     id: 9,
@@ -99,7 +100,7 @@ export const users: User[] = [
     address: '333 Spruce St, Dallas, TX',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.Author,
+    role: UserTypeEnum.Author,
   },
   {
     id: 10,
@@ -110,7 +111,7 @@ export const users: User[] = [
     address: '444 Aspen St, San Jose, CA',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserTypeEnum.User,
   },
   {
     id: 11,
@@ -121,7 +122,7 @@ export const users: User[] = [
     address: '555 Willow St, Austin, TX',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.Editor,
+    role: UserTypeEnum.Editor,
   },
   {
     id: 12,
@@ -132,7 +133,7 @@ export const users: User[] = [
     address: '666 Poplar St, Jacksonville, FL',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserTypeEnum.User,
   },
   {
     id: 13,
@@ -143,7 +144,7 @@ export const users: User[] = [
     address: '777 Chestnut St, Fort Worth, TX',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.Admin,
+    role: UserTypeEnum.Admin,
   },
   {
     id: 14,
@@ -154,7 +155,7 @@ export const users: User[] = [
     address: '888 Hickory St, Columbus, OH',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.User,
+    role: UserTypeEnum.User,
   },
   {
     id: 15,
@@ -165,7 +166,7 @@ export const users: User[] = [
     address: '999 Sycamore St, Charlotte, NC',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.SuperAdmin,
+    role: UserTypeEnum.SuperAdmin,
   },
   {
     id: 16,
@@ -176,7 +177,7 @@ export const users: User[] = [
     address: '1010 Magnolia St, Indianapolis, IN',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.Editor,
+    role: UserTypeEnum.Editor,
   },
   {
     id: 17,
@@ -187,7 +188,7 @@ export const users: User[] = [
     address: '1111 Palm St, San Francisco, CA',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.Admin,
+    role: UserTypeEnum.Admin,
   },
   {
     id: 18,
@@ -198,7 +199,7 @@ export const users: User[] = [
     address: '1212 Olive St, Seattle, WA',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.User,
+    role: UserTypeEnum.User,
   },
   {
     id: 19,
@@ -209,7 +210,7 @@ export const users: User[] = [
     address: '1313 Cherry St, Denver, CO',
     registeredDate: '2024-07-12',
     isActive: true,
-    role: UserType.Admin,
+    role: UserTypeEnum.Admin,
   },
   {
     id: 20,
@@ -220,6 +221,6 @@ export const users: User[] = [
     address: '1414 Dogwood St, Boston, MA',
     registeredDate: '2024-07-12',
     isActive: false,
-    role: UserType.SuperAdmin,
+    role: UserTypeEnum.SuperAdmin,
   },
 ];
