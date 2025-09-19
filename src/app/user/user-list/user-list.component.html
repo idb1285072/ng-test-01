@@ -205,7 +205,27 @@
 
           <tr *ngIf="inlineEditUserId !== user.id">
             <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-            <td>{{ user.name }}</td>
+            <td (dblclick)="onStartCellEdit(user.id, 'name')">
+              <ng-container
+                *ngIf="
+                  cellEditData?.userId === user.id &&
+                    cellEditData?.field === 'name';
+                  else nameDisplay
+                "
+              >
+                <input
+                  class="form-control form-control-sm"
+                  [value]="user.name"
+                  (blur)="onSaveCellEdit(user, 'name')"
+                  (keydown.enter)="onSaveCellEdit(user, 'name')"
+                  (keydown.escape)="onCancelCellEdit()"
+                  autofocus
+                />
+              </ng-container>
+              <ng-template #nameDisplay>
+                {{ user.name }}
+              </ng-template>
+            </td>
             <td>{{ user.age }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.phone }}</td>

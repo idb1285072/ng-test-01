@@ -14,7 +14,6 @@ import { UserInterface } from '../types/user.interface';
 import { UserTypeEnum } from '../types/enums/user-type.enum';
 import { StatusTypeEnum } from '../types/enums/status-type.enum';
 import {
-  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
@@ -42,6 +41,8 @@ export class UserListComponent implements OnInit, OnDestroy {
   isBulkUpdate: boolean = false;
   bulkForm!: FormGroup<{ users: FormArray<FormGroup<UserBulkFormInterface>> }>;
   bulkFormArray!: FormArray<FormGroup<UserBulkFormInterface>>;
+  cellEditData: { userId: number; field: string } | null = null;
+  cellEditForms: Map<number, FormGroup> = new Map();
 
   addColumnUserId: number | null = null;
   addColumnForm!: FormGroup<ChildUserBulkFormInterface>;
@@ -72,6 +73,36 @@ export class UserListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initQueryParam();
     this.initSearchSubscription();
+  }
+
+  onStartCellEdit(userId: number, field: keyof UserInterface) {
+    if (this.isBulkUpdate) return;
+    this.cellEditData = { userId, field };
+  }
+
+  onSaveCellEdit(user: UserInterface, field: keyof UserInterface) {
+    const form = this.cellEditForms.get(user.id)!;
+    const control = form.get(field)!;
+
+    control.markAsTouched();
+    if (control.invalid) return; // Block invalid save
+
+    const updatedUser: UserInterface = { ...user, [field]: control.value };
+    this.userService.updateUser(updatedUser);
+
+    this.cellEditData = null;
+    this.refreshDisplayedUsers();
+  }
+
+  onCancelCellEdit() {
+     if (this.cellEditData) {
+    const { userId, field } = this.cellEditData;
+    const user = this.displayedUsers.find(u => u.id === userId);
+    if (user) {
+      // this.cellEditForms.get(userId)?.get(field)?.setValue(user[field]);
+    }
+  }
+  this.cellEditData = null;
   }
 
   onInlineEdit(user: UserInterface) {
@@ -223,10 +254,10 @@ export class UserListComponent implements OnInit, OnDestroy {
   //   children.removeAt(childIndex);
   // }
 
-  getChildrenControls(group: AbstractControl) {
-    const formGroup = group as FormGroup;
-    return (formGroup.get('children') as FormArray).controls;
-  }
+  // getChildrenControls(group: AbstractControl) {
+  //   const formGroup = group as FormGroup;
+  //   return (formGroup.get('children') as FormArray).controls;
+  // }
 
   // onSaveBulkUpdate() {
   //   if (this.bulkForm.valid) {
@@ -424,13 +455,29 @@ export class UserListComponent implements OnInit, OnDestroy {
     });
   }
 
-  initSearchSubscription() {
+  private initSearchSubscription() {
     this.searchSubscription = this.searchSubject$
       .pipe(debounceTime(1000), distinctUntilChanged())
       .subscribe((text) => {
         this.searchTerm = text;
         this.reload(true);
       });
+  }
+
+  private buildCellUpdateForm(user: UserInterface): FormGroup {
+    return this.fb.group({
+      name: [user.name, Validators.required],
+      age: [
+        user.age,
+        [Validators.required, Validators.min(18), Validators.max(120)],
+      ],
+      email: [user.email, [Validators.required, Validators.email]],
+      phone: [user.phone],
+      address: [user.address],
+      registeredDate: [user.registeredDate],
+      role: [user.role, Validators.required],
+      isActive: [user.isActive, Validators.required],
+    });
   }
   ngOnDestroy(): void {
     this.searchSubscription?.unsubscribe();
