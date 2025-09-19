@@ -1,31 +1,23 @@
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { UserService } from 'src/app/user/user.service';
 
-// export function uniqueEmailValidator(userService: UserService) {
-//   return (control: AbstractControl): ValidationErrors | null => {
-//     const emails = userService.getAllEmails();
-//     if (emails.includes(control.value.trim())) {
-//       return { notUniqueEmail: true };
-//     } else {
-//       return null;
-//     }
-//   };
-// }
-
 export function uniqueEmailValidator(
   userService: UserService,
-  currentUserId?: number
+  currentEmail?: string // pass existing email to ignore in edit
 ) {
   return (control: AbstractControl): ValidationErrors | null => {
-    const users = userService.getAllEmailsWithId(); // [{id, email}]
-    const value = typeof control.value === 'string' ? control.value : '';
+    const emails = userService.getAllEmails(); // string[]
+    const value =
+      typeof control.value === 'string'
+        ? control.value.trim().toLowerCase()
+        : '';
 
-    const exists = users.some(
-      (u) =>
-        u.email.trim().toLowerCase() === value.trim().toLowerCase() &&
-        u.id !== currentUserId
+    const exists = emails.some(
+      (e) =>
+        e.trim().toLowerCase() === value &&
+        e.trim().toLowerCase() !== (currentEmail?.trim().toLowerCase() || '')
     );
-    console.log('current id ',currentUserId);
+
     return exists ? { notUniqueEmail: true } : null;
   };
 }

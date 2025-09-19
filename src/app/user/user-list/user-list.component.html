@@ -132,7 +132,7 @@
                   class="form-select form-select-sm"
                   formControlName="role"
                 >
-                  <option *ngFor="let role of roleOptions" [value]="role">
+                  <option *ngFor="let role of roleOptions" [ngValue]="role">
                     {{ getRoleName(role) }}
                   </option>
                 </select>
@@ -355,7 +355,8 @@
                   class="form-select form-select-sm"
                   formControlName="role"
                 >
-                  <option *ngFor="let role of roleOptions" [value]="role">
+                  <!-- <option *ngFor="let role of roleOptions" [value]="role"> -->
+                  <option *ngFor="let role of roleOptions" [ngValue]="role">
                     {{ getRoleName(role) }}
                   </option>
                 </select>

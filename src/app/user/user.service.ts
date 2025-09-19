@@ -15,10 +15,8 @@ export class UserService {
     this.saveToLocalStorage();
   }
 
-  getAllEmailsWithId(): {id:number, email:string}[] {
-    return this.users.map((user: UserInterface) => 
-      ({ id: user.id, email: user.email }),
-    );
+  getAllEmails(): string[] {
+    return this.users.map((user: UserInterface) => user.email);
   }
 
   getPaginatedUsers(
@@ -50,7 +48,7 @@ export class UserService {
     // Role filter
     if (roleFilter !== 'all') {
       filtered = filtered.filter((u) => {
-        return +u.role === roleFilter;
+        return u.role === roleFilter;
       });
     }
 
@@ -76,7 +74,10 @@ export class UserService {
   updateUser(updatedUser: UserInterface) {
     const index = this.users.findIndex((u) => u.id === updatedUser.id);
     if (index !== -1) {
-      this.users[index] = updatedUser;
+      this.users[index] = {
+        ...this.users[index],
+        ...updatedUser,
+      };
       this.saveToLocalStorage();
     }
   }

@@ -5,6 +5,7 @@ import { UserService } from '../user.service';
 import { UserTypeEnum } from '../types/enums/user-type.enum';
 import { UserInterface } from '../types/user.interface';
 import { uniqueEmailValidator } from 'src/app/shared/validators/unique-email.validator';
+import { UserEditFormInterface } from '../types/user-edit-form.interface';
 
 @Component({
   selector: 'app-user-edit',
@@ -12,7 +13,7 @@ import { uniqueEmailValidator } from 'src/app/shared/validators/unique-email.val
   styleUrls: ['./user-edit.component.css'],
 })
 export class UserEditComponent implements OnInit {
-  userForm!: FormGroup;
+  userForm!: FormGroup<UserEditFormInterface>;
   isEditMode: boolean = false;
   userId!: number;
   UserType = UserTypeEnum;
@@ -25,43 +26,13 @@ export class UserEditComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userForm = this.fb.group({
-      id: [0],
-      name: ['', Validators.required],
-      age: [0, [Validators.required, Validators.max(120), Validators.min(18)]],
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.email,
-          uniqueEmailValidator(this.userService),
-        ],
-      ],
-      phone: [''],
-      address: [''],
-      registeredDate: [new Date().toISOString().split('T')[0]],
-      isActive: [false],
-      role: [UserTypeEnum.User, Validators.required],
-    });
-
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.isEditMode = true;
-      this.userId = +id;
-      const existingUser = this.userService.getUserById(this.userId);
-      if (existingUser) {
-        this.userForm
-          .get('email')
-          ?.addValidators(uniqueEmailValidator(this.userService, this.userId));
-        this.userForm.patchValue(existingUser);
-      }
-    }
+    this.initEditForm();
   }
 
   onSubmit() {
     if (this.userForm.invalid) return;
 
-    const user: UserInterface = this.userForm.value;
+    const user: UserInterface = this.userForm.getRawValue();
 
     if (this.isEditMode) {
       this.userService.updateUser(user);
@@ -73,15 +44,60 @@ export class UserEditComponent implements OnInit {
     this.router.navigate(['/users']);
   }
 
-  // onSaveInlineEdit(user: UserInterface) {
-  //   if (this.inlineEditForm && this.inlineEditForm.valid) {
-  //     const updatedUser = { ...user, ...this.inlineEditForm.value };
-  //     this.userService.updateUser(updatedUser);
-  //     this.onCancelInlineEdit();
-  //     this.refreshDisplayedUsers();
-  //   }
-  // }
   onCancel() {
     this.router.navigate(['/users']);
+  }
+  private initEditForm(): void {
+    this.userForm = this.fb.group({
+      id: this.fb.control(0),
+      name: this.fb.control('', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      age: this.fb.control(0, {
+        nonNullable: true,
+        validators: [
+          Validators.required,
+          Validators.min(18),
+          Validators.max(120),
+        ],
+      }),
+      email: this.fb.control('', {
+        nonNullable: true,
+        validators: [
+          Validators.required,
+          Validators.email,
+          uniqueEmailValidator(this.userService),
+        ],
+      }),
+      phone: this.fb.control('', { nonNullable: true }),
+      address: this.fb.control('', { nonNullable: true }),
+      registeredDate: this.fb.control(new Date().toISOString().split('T')[0], {
+        nonNullable: true,
+      }),
+      isActive: this.fb.control(false, { nonNullable: true }),
+      role: this.fb.control(UserTypeEnum.User, {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+    }) as FormGroup<UserEditFormInterface>;
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.isEditMode = true;
+      this.userId = +id;
+      const existingUser = this.userService.getUserById(this.userId);
+      if (existingUser) {
+        this.userForm.get('email')?.clearValidators();
+        this.userForm
+          .get('email')
+          ?.addValidators([
+            Validators.required,
+            Validators.email,
+            uniqueEmailValidator(this.userService, existingUser.email),
+          ]);
+        this.userForm.patchValue(existingUser);
+      }
+    }
   }
 }
