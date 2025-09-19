@@ -14,7 +14,7 @@ import { UserInterface } from '../types/user.interface';
 import { UserTypeEnum } from '../types/enums/user-type.enum';
 import { StatusTypeEnum } from '../types/enums/status-type.enum';
 import {
-  Form,
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
@@ -37,6 +37,8 @@ export class UserListComponent implements OnInit, OnDestroy {
   isBulkUpdate: boolean = false;
   bulkForm!: FormGroup;
   bulkFormArray!: FormArray;
+  addColumnUserId: number | null = null;
+  addColumnForm!: FormGroup;
 
   currentPage: number = 1;
   itemsPerPage: number = 5;
@@ -91,24 +93,50 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   onInlineEdit(user: UserInterface) {
     this.inlineEditUserId = user.id;
+
     this.inlineEditForm = this.fb.group({
-      name: [user.name],
-      age: [user.age],
+      name: [user.name, Validators.required],
+      age: [user.age, [Validators.required, Validators.min(1)]],
       email: [
         user.email,
-        [Validators.email, Validators.required, uniqueEmailValidator],
+        [Validators.required, Validators.email, uniqueEmailValidator],
       ],
       phone: [user.phone],
       address: [user.address],
       registeredDate: [user.registeredDate],
-      role: [user.role],
-      isActive: [user.isActive],
+      role: [user.role, Validators.required],
+      isActive: [user.isActive, Validators.required],
+      children: this.fb.array(
+        // add children array
+        (user.children || []).map((child) =>
+          this.fb.group({
+            column: [child.column, Validators.required],
+            value: [child.value, Validators.required],
+          })
+        )
+      ),
     });
+  }
+
+  get inlineChildren(): FormArray {
+    return this.inlineEditForm.get('children') as FormArray;
+  }
+
+  addInlineChild() {
+    this.inlineChildren.push(
+      this.fb.group({
+        column: ['', Validators.required],
+        value: ['', Validators.required],
+      })
+    );
+  }
+
+  removeInlineChild(index: number) {
+    this.inlineChildren.removeAt(index);
   }
 
   onCancelInlineEdit() {
     this.inlineEditUserId = null;
-    // this.inlineEditForm = null;
   }
   onSaveInlineEdit(user: UserInterface) {
     if (this.inlineEditForm && this.inlineEditForm.valid) {
@@ -133,6 +161,14 @@ export class UserListComponent implements OnInit, OnDestroy {
           registeredDate: [user.registeredDate],
           role: [user.role],
           isActive: [user.isActive],
+          children: this.fb.array(
+            (user.children || []).map((child) =>
+              this.fb.group({
+                column: [child.column, Validators.required],
+                value: [child.value, Validators.required],
+              })
+            )
+          ),
         })
       )
     );
@@ -140,6 +176,29 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.bulkForm = this.fb.group({
       users: this.bulkFormArray,
     });
+  }
+
+  addBulkChild(userIndex: number) {
+    const children = this.bulkFormArray
+      .at(userIndex)
+      .get('children') as FormArray;
+    children.push(
+      this.fb.group({
+        column: ['', Validators.required],
+        value: ['', Validators.required],
+      })
+    );
+  }
+
+  removeBulkChild(userIndex: number, childIndex: number) {
+    const children = this.bulkFormArray
+      .at(userIndex)
+      .get('children') as FormArray;
+    children.removeAt(childIndex);
+  }
+  getChildrenControls(group: AbstractControl) {
+    const formGroup = group as FormGroup;
+    return (formGroup.get('children') as FormArray).controls;
   }
 
   onSaveBulkUpdate() {
@@ -155,8 +214,39 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.isBulkUpdate = false;
   }
 
-  onItemsPerPageChange() {
-    this.reload(true);
+  onAddColumn(user: UserInterface) {
+    this.addColumnUserId = user.id;
+    this.addColumnForm = this.fb.group({
+      column: ['', Validators.required],
+      value: ['', Validators.required],
+    });
+  }
+
+  onSaveColumn(user: UserInterface) {
+    if (this.addColumnForm.valid) {
+      const newColumn = this.addColumnForm.value;
+
+      if (!user.children) {
+        user.children = [];
+      }
+      user.children.push(newColumn);
+
+      this.userService.updateUser(user); // persist changes
+      this.addColumnUserId = null;
+      this.refreshDisplayedUsers();
+    }
+  }
+
+  onCancelColumn() {
+    this.addColumnUserId = null;
+  }
+
+  chunkChildren(children: { column: string; value: string }[], size: number) {
+    const chunks = [];
+    for (let i = 0; i < children.length; i += size) {
+      chunks.push(children.slice(i, i + size));
+    }
+    return chunks;
   }
 
   onRoleChange() {

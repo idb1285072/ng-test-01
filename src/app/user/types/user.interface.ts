@@ -1,4 +1,4 @@
-import { UserTypeEnum } from "./enums/user-type.enum";
+import { UserTypeEnum } from './enums/user-type.enum';
 
 export interface UserInterface {
   id: number;
@@ -9,5 +9,6 @@ export interface UserInterface {
   address: string;
   registeredDate: string;
   isActive: boolean;
-  role: UserTypeEnum
+  role: UserTypeEnum;
+  children?: { column: string; value: string }[];
 }

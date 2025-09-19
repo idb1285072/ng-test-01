@@ -18,7 +18,7 @@ export class UserService {
   getAllEmails(): string[] {
     return this.users.map((user: UserInterface) => user.email);
   }
-  
+
   getPaginatedUsers(
     page: number,
     itemsPerPage: number,
@@ -34,8 +34,6 @@ export class UserService {
     else if (status === StatusTypeEnum.inactive)
       filtered = filtered.filter((u) => !u.isActive);
 
-    console.log(filtered, status, StatusTypeEnum.active);
-
     // Search filter
     if (searchText) {
       const lower = searchText.trim().toLowerCase();
@@ -49,9 +47,12 @@ export class UserService {
 
     // Role filter
     if (roleFilter !== 'all') {
-      filtered = filtered.filter((u) => u.role === roleFilter);
+      filtered = filtered.filter((u) => {
+        return +u.role === roleFilter;
+      });
     }
 
+    console.log(filtered, typeof roleFilter, typeof UserTypeEnum.SuperAdmin);
     const totalUsers = filtered.length;
     const start = (page - 1) * itemsPerPage;
     const paginatedUsers = filtered.slice(start, start + itemsPerPage);

@@ -6,7 +6,7 @@ export function uniqueEmailValidator() {
   return (control: AbstractControl) => {
     const userService = inject(UserService);
     const emails = userService.getAllEmails();
-    if (emails.includes(control.value)) {
+    if (emails.includes(control.value.trim())) {
       return { notUniqueEmail: true };
     } else {
       return null;
