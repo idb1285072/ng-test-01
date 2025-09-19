@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { UserTypeEnum } from '../types/enums/user-type.enum';
 import { UserInterface } from '../types/user.interface';
-
+import { uniqueEmailValidator } from 'src/app/shared/validators/unique-email.validator';
 
 @Component({
   selector: 'app-user-edit',
@@ -29,7 +29,14 @@ export class UserEditComponent implements OnInit {
       id: [0],
       name: ['', Validators.required],
       age: [0, [Validators.required, Validators.max(120), Validators.min(18)]],
-      email: ['', [Validators.required, Validators.email]],
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.email,
+          uniqueEmailValidator(this.userService),
+        ],
+      ],
       phone: [''],
       address: [''],
       registeredDate: [new Date().toISOString().split('T')[0]],
@@ -43,6 +50,9 @@ export class UserEditComponent implements OnInit {
       this.userId = +id;
       const existingUser = this.userService.getUserById(this.userId);
       if (existingUser) {
+        this.userForm
+          .get('email')
+          ?.addValidators(uniqueEmailValidator(this.userService, this.userId));
         this.userForm.patchValue(existingUser);
       }
     }
@@ -63,6 +73,14 @@ export class UserEditComponent implements OnInit {
     this.router.navigate(['/users']);
   }
 
+  // onSaveInlineEdit(user: UserInterface) {
+  //   if (this.inlineEditForm && this.inlineEditForm.valid) {
+  //     const updatedUser = { ...user, ...this.inlineEditForm.value };
+  //     this.userService.updateUser(updatedUser);
+  //     this.onCancelInlineEdit();
+  //     this.refreshDisplayedUsers();
+  //   }
+  // }
   onCancel() {
     this.router.navigate(['/users']);
   }

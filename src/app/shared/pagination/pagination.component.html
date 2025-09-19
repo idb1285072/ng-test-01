@@ -6,6 +6,7 @@
       class="form-select d-inline-block w-auto"
       [ngModel]="itemsPerPage"
       (ngModelChange)="onChangePageSize($event)"
+      [disabled]="isDisabled"
     >
       <option *ngFor="let size of pageSizes" [value]="size">{{ size }}</option>
     </select>
@@ -13,7 +14,7 @@
 
   <nav *ngIf="totalPages > 1">
     <ul class="pagination mb-0">
-      <li class="page-item" [class.disabled]="currentPage === 1">
+      <li class="page-item" [class.disabled]="currentPage === 1 || isDisabled">
         <a class="page-link" (click)="onChangePage(currentPage - 1)"
           >Previous</a
         >
@@ -36,13 +37,17 @@
       </li> -->
       <li
         class="page-item"
+        [class.disabled]="isDisabled"
         *ngFor="let page of totalPages | range"
         [class.active]="page === currentPage"
       >
         <a class="page-link" (click)="onChangePage(page)">{{ page }}</a>
       </li>
 
-      <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <li
+        class="page-item"
+        [class.disabled]="currentPage === totalPages || isDisabled"
+      >
         <a class="page-link" (click)="onChangePage(currentPage + 1)">Next</a>
       </li>
     </ul>

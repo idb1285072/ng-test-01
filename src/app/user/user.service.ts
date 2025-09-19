@@ -15,8 +15,10 @@ export class UserService {
     this.saveToLocalStorage();
   }
 
-  getAllEmails(): string[] {
-    return this.users.map((user: UserInterface) => user.email);
+  getAllEmailsWithId(): {id:number, email:string}[] {
+    return this.users.map((user: UserInterface) => 
+      ({ id: user.id, email: user.email }),
+    );
   }
 
   getPaginatedUsers(

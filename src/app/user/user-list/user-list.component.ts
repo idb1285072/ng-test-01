@@ -99,45 +99,37 @@ export class UserListComponent implements OnInit, OnDestroy {
       age: [user.age, [Validators.required, Validators.min(1)]],
       email: [
         user.email,
-        [Validators.required, Validators.email, uniqueEmailValidator],
+        [Validators.required, Validators.email, uniqueEmailValidator(this.userService)],
       ],
       phone: [user.phone],
       address: [user.address],
       registeredDate: [user.registeredDate],
       role: [user.role, Validators.required],
       isActive: [user.isActive, Validators.required],
-      children: this.fb.array(
-        // add children array
-        (user.children || []).map((child) =>
-          this.fb.group({
-            column: [child.column, Validators.required],
-            value: [child.value, Validators.required],
-          })
-        )
-      ),
     });
   }
 
-  get inlineChildren(): FormArray {
-    return this.inlineEditForm.get('children') as FormArray;
-  }
+  // get inlineChildren(): FormArray {
+  //   return this.inlineEditForm.get('children') as FormArray;
+  // }
 
-  addInlineChild() {
-    this.inlineChildren.push(
-      this.fb.group({
-        column: ['', Validators.required],
-        value: ['', Validators.required],
-      })
-    );
-  }
+  // addInlineChild() {
+  //   this.inlineChildren.push(
+  //     this.fb.group({
+  //       column: ['', Validators.required],
+  //       value: ['', Validators.required],
+  //     })
+  //   );
+  // }
 
-  removeInlineChild(index: number) {
-    this.inlineChildren.removeAt(index);
-  }
+  // removeInlineChild(index: number) {
+  //   this.inlineChildren.removeAt(index);
+  // }
 
   onCancelInlineEdit() {
     this.inlineEditUserId = null;
   }
+
   onSaveInlineEdit(user: UserInterface) {
     if (this.inlineEditForm && this.inlineEditForm.valid) {
       const updatedUser = { ...user, ...this.inlineEditForm.value };
@@ -178,24 +170,25 @@ export class UserListComponent implements OnInit, OnDestroy {
     });
   }
 
-  addBulkChild(userIndex: number) {
-    const children = this.bulkFormArray
-      .at(userIndex)
-      .get('children') as FormArray;
-    children.push(
-      this.fb.group({
-        column: ['', Validators.required],
-        value: ['', Validators.required],
-      })
-    );
-  }
+  // addBulkChild(userIndex: number) {
+  //   const children = this.bulkFormArray
+  //     .at(userIndex)
+  //     .get('children') as FormArray;
+  //   children.push(
+  //     this.fb.group({
+  //       column: ['', Validators.required],
+  //       value: ['', Validators.required],
+  //     })
+  //   );
+  // }
 
-  removeBulkChild(userIndex: number, childIndex: number) {
-    const children = this.bulkFormArray
-      .at(userIndex)
-      .get('children') as FormArray;
-    children.removeAt(childIndex);
-  }
+  // removeBulkChild(userIndex: number, childIndex: number) {
+  //   const children = this.bulkFormArray
+  //     .at(userIndex)
+  //     .get('children') as FormArray;
+  //   children.removeAt(childIndex);
+  // }
+  
   getChildrenControls(group: AbstractControl) {
     const formGroup = group as FormGroup;
     return (formGroup.get('children') as FormArray).controls;

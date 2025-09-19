@@ -15,6 +15,7 @@
           [value]="s.value"
           [(ngModel)]="statusFilter"
           (change)="onStatusChange()"
+          [disabled]="isBulkUpdate"
         />
         <label class="form-check-label" [for]="s.value + 'Status'">
           {{ s.label | titlecase }}
@@ -29,6 +30,7 @@
         class="form-select d-inline-block w-auto"
         [(ngModel)]="roleFilter"
         (change)="onRoleChange()"
+        [disabled]="isBulkUpdate"
       >
         <option [ngValue]="'all'">All</option>
         <option *ngFor="let role of roleOptions" [ngValue]="role">
@@ -40,7 +42,13 @@
     <button class="btn btn-warning" (click)="onBulkUpdateUsers(displayedUsers)">
       Bulk Update
     </button>
-    <button class="btn btn-success" (click)="onAddUser()">Add User</button>
+    <button
+      class="btn btn-success"
+      (click)="onAddUser()"
+      [disabled]="isBulkUpdate"
+    >
+      Add User
+    </button>
   </div>
 
   <!-- Search -->
@@ -51,6 +59,7 @@
       placeholder="Search by name, email or phone..."
       [(ngModel)]="searchTerm"
       (ngModelChange)="onSearchChange($event)"
+      [disabled]="isBulkUpdate"
     />
   </div>
 
@@ -152,7 +161,7 @@
                 </button>
               </td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td></td>
               <td colspan="8">
                 <div formArrayName="children">
@@ -191,7 +200,7 @@
                 </button>
               </td>
               <td></td>
-            </tr>
+            </tr> -->
           </ng-container>
 
           <tr *ngIf="inlineEditUserId !== user.id">
@@ -362,7 +371,7 @@
               </td>
               <td></td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td></td>
               <td colspan="8">
                 <div formArrayName="children">
@@ -404,7 +413,7 @@
                 </button>
               </td>
               <td></td>
-            </tr>
+            </tr> -->
           </ng-container>
         </ng-container>
       </tbody>
@@ -424,6 +433,7 @@
     [totalItems]="totalUsers"
     [itemsPerPage]="itemsPerPage"
     [currentPage]="currentPage"
+    [isDisabled]="isBulkUpdate"
     (pageChange)="onPaginationChange($event)"
   ></app-pagination>
 </div>

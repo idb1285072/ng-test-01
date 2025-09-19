@@ -15,6 +15,8 @@ export class PaginationComponent {
   @Input() totalItems: number = 0;
   @Input() itemsPerPage: number = 5;
   @Input() currentPage: number = 1;
+  @Input() isDisabled: boolean = false;
+  
   @Output() pageChange = new EventEmitter<PaginationEvent>();
 
   pageSizes: number[] = Object.values(PageSizeEnum).filter(
